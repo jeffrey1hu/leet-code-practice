@@ -74,19 +74,14 @@ class Solution1(object):
             if not _list:
                 continue
             heap.insert(_list)
-        if heap.get_size() > 0:
-            head_node = heap.extract_min()
-            # print("extract head node {}".format(head_node.val))
-            current_node = head_node
-        else:
-            return []
+        head_node = point = ListNode(0)
         while heap.get_size()>0:
 
-            current_node.next = heap.extract_min()
+            point.next = heap.extract_min()
             # print("extract {}".format(current_node.next.val))
-            current_node = current_node.next
+            point = point.next
 
-        return head_node
+        return head_node.next
 
 
 ### Solution 2: divide and conquer
