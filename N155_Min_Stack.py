@@ -67,3 +67,6 @@ print minStack.pop()     #;
 print "stack arr after pop", minStack._arr
 print "2", minStack.top()     #;      --> Returns 0.
 print "3", minStack.getMin()  # ;   --> Returns -2.
+
+f = open("", 'r')
+f.readline()
