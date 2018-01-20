@@ -13,7 +13,23 @@ def find_maximum_subset_dp(target_arr):
         all_max[i] = max(all_max[i+1], start_max[i])
     return all_max[0]
 
+def find_maximum_subset_dp2(target_arr):
+    start_max = [None] * len(target_arr)
+    all_max = [None] * len(target_arr)
+
+    start_max[0] = target_arr[0]
+    all_max[0] = target_arr[0]
+    for i in range(1, len(target_arr)):
+        start_max[i] = max(target_arr[i], start_max[i-1] + target_arr[i])
+        all_max[i] = max(all_max[i-1], start_max[i])
+    return all_max[-1]
+
 def find_maximum_subset_dp_improved(target_arr):
+    """
+    decrease space complexity and ouput optimal path
+    :param target_arr:
+    :return:
+    """
 
     last_start_max = target_arr[-1]
     last_all_max = target_arr[-1]
@@ -78,6 +94,7 @@ if __name__ == '__main__':
     start, end, result1 = find_maximum_subset(test_arr, 0, len(test_arr))
     print start, end-1, result1
     result2 = find_maximum_subset_dp(test_arr)
+    assert result2 == find_maximum_subset_dp2(test_arr)
     print result2
     start1, end1, result3 = find_maximum_subset_dp_improved(test_arr)
     print start1, end1, result3
