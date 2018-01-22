@@ -49,29 +49,29 @@ def quick_sort(target_array):
     return quick_sort(smaller) + equals + quick_sort(larger)
 
 
-def quick_sort2(nums, start, end):
-    # print("target sub array {}".format(nums[start: end+1]))
+def quick_sort2(nums):
+    quick_sort_util(nums, 0, len(nums)-1)
+    return nums
+
+
+def quick_sort_util(nums, start, end):
     if end - start <= 0:
         return
     idx = random.randint(start, end)
     pivot = nums[idx]
-    swap(nums, idx, start)
-    # print("pivot", pivot)
+    swap(nums, start, idx)
+
     i = start
     j = end
-
     while j > i:
-
         while nums[j] > pivot and j > i:
             j -= 1
         swap(nums, i, j)
         while nums[i] <= pivot and j > i:
             i += 1
         swap(nums, i, j)
-        # print nums
-
-    quick_sort2(nums, start, i-1)
-    quick_sort2(nums, i+1, end)
+    quick_sort_util(nums, start, i-1)
+    quick_sort_util(nums, i+1, end)
 
 
 
@@ -152,6 +152,100 @@ def merge_sort(target_arr):
     return _merge(merge_sort(target_arr[:mid]), merge_sort(target_arr[mid:]))
 
 
+class Heap:
+    def __init__(self, nums):
+        self._arr = nums
+
+    def extract_min(self):
+        min_val = self._arr[0]
+        self.swap(0, len(self._arr)-1)
+        self._arr.pop()
+        if self._arr:
+            self.shift_down(0)
+        return min_val
+
+    def get_min(self):
+        return self._arr[0]
+
+    def insert(self, x):
+        self._arr.append(x)
+        self.shift_up(len(self._arr) - 1)
+
+    def shift_up(self, i):
+        _parent = self.parent(i)
+        if self._arr[i] < self._arr[_parent]:
+            self.swap(i, _parent)
+            if _parent > 0:
+                self.shift_up(_parent)
+
+    def shift_down(self, i):
+        _left_child = self.left_child(i)
+        _right_child = self.right_child(i)
+
+        min_i = i
+        min_val = self._arr[i]
+        if _left_child < len(self._arr) and self._arr[_left_child] < min_val:
+            min_val = self._arr[_left_child]
+            min_i = _left_child
+        if _right_child < len(self._arr) and self._arr[_right_child] < min_val:
+            min_i = _right_child
+        if i != min_i:
+            self.swap(i, min_i)
+            self.shift_down(min_i)
+
+    def parent(self, i):
+        a = i + 1
+        return (a // 2) - 1
+
+    def left_child(self, i):
+        a = i + 1
+        return (a * 2) - 1
+
+    def right_child(self, i):
+        a = i + 1
+        return (a * 2 + 1) - 1
+
+    def swap(self, i, j):
+        self._arr[i], self._arr[j] = self._arr[j], self._arr[i]
+
+
+def heap_sort2(target_arr):
+    heap = Heap([])
+    for ele in target_arr:
+        heap.insert(ele)
+        # print "heap arr debug: ", heap._arr
+    return [heap.extract_min() for _ in range(len(heap._arr))]
+
+
+def heapify(target_arr, n, i):
+    smallest = i
+    l = 2 * i + 1
+    r = 2 * i + 2
+
+    if l < n and target_arr[l] > target_arr[smallest]:
+        smallest = l
+    if r < n and target_arr[r] > target_arr[smallest]:
+        smallest = r
+
+    if smallest != i:
+        target_arr[i], target_arr[smallest] = target_arr[smallest], target_arr[i]
+        heapify(target_arr, n, smallest)
+
+
+def heap_sort3(target_arr):
+    n = len(target_arr)
+
+    # building the min-heap
+    for i in range(n, -1, -1):
+        heapify(target_arr, n, i)
+
+    # print target_arr
+    # heap sort
+    for j in range(n-1, 0, -1):
+        target_arr[0], target_arr[j] = target_arr[j], target_arr[0]
+        heapify(target_arr, j, 0)
+
+
 def heap_sort(target_arr):
     heapq.heapify(target_arr)
 
@@ -170,8 +264,10 @@ if __name__ == '__main__':
     ts_quick_sort2 = []
     ts_merge_sort = []
     ts_heap_sort = []
+    ts_heap_sort2 = []
+    ts_heap_sort3 = []
 
-    for _ in range(1000):
+    for _ in range(10):
         test_array = [random.randint(-1000, 1000) for _ in range(10)]
 
         tic = time.time()
@@ -196,8 +292,7 @@ if __name__ == '__main__':
 
         tic = time.time()
         tt = copy.copy(test_array)
-        quick_sort2(tt, 0, len(tt)-1)
-        t6 = tt
+        t6 = quick_sort2(tt)
         ts_quick_sort2.append(time.time() - tic)
 
         tic = time.time()
@@ -207,6 +302,16 @@ if __name__ == '__main__':
         tic = time.time()
         t8 = heap_sort(copy.copy(test_array))
         ts_heap_sort.append(time.time() - tic)
+
+        tic = time.time()
+        t9 = heap_sort2(copy.copy(test_array))
+        ts_heap_sort2.append(time.time() - tic)
+
+        tic = time.time()
+        t10 = copy.copy(test_array)
+        heap_sort3(t10)
+        ts_heap_sort3.append(time.time() - tic)
+
 
         tic = time.time()
         test_array.sort()
@@ -220,8 +325,10 @@ if __name__ == '__main__':
         print t6
         print t7
         print t8
+        print t9
+        print t10
         print test_array
-        assert t1 == t2 == t3 == t4 == t5 == t6 == t7 == t8 == test_array
+        assert t1 == t2 == t3 == t4 == t5 == t6 == t7 == t8 == t9 == t10 == test_array
 
 
     print "build in {}".format(np.mean(ts_build_in))
@@ -233,6 +340,8 @@ if __name__ == '__main__':
     print "ts_quick_sort2 ", np.mean(ts_quick_sort2)
     print "ts_merge_sort ", np.mean(ts_merge_sort)
     print "ts_heap_sort ", np.mean(ts_heap_sort)
+    print "ts_heap_sort2 ", np.mean(ts_heap_sort2)
+    print "ts_heap_sort3 ", np.mean(ts_heap_sort3)
 
 # build in 0.00326411724091
 # ts_select_sort  3.02807388306
