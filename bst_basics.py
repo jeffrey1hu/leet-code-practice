@@ -33,44 +33,54 @@ def insert(root, node):
                 insert(root.left, node)
     return root
 
-def _find_min_val_node(root):
-    """
-    :param root: The root of a BST
-    :return: node with min val in the tree
-    """
-    if root is None:
-        return None
 
-    if not root.left:
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution(object):
+    def deleteNode(self, root, key):
+        """
+        :type root: TreeNode
+        :type key: int
+        :rtype: TreeNode
+        """
+        if root is None:
+            return root
+        if root.val < key:
+            root.right = self.deleteNode(root.right, key)
+        elif root.val > key:
+            root.left = self.deleteNode(root.left, key)
+        else:
+            if root.left is None:
+                temp = root.right
+                root = None
+                return temp
+            if root.right is None:
+                temp = root.left
+                return temp
+
+            temp = self._find_min_val_node(root.right)
+            root.val = temp.val
+            root.right = self.deleteNode(root.right, temp.val)
         return root
-    else:
-        return _find_min_val_node(root.left)
 
+    def _find_min_val_node(self, root):
+        """
+        :param root: The root of a BST
+        :return: node with min val in the tree
+        """
+        if root is None:
+            return None
 
-def delete_node(root, key):
+        if not root.left:
+            return root
+        else:
+            return self._find_min_val_node(root.left)
 
-    if root is None:
-        return root
-
-    if key < root.val:
-        root.left = delete_node(root.left, key)
-    elif key > root.val:
-        root.right = delete_node(node.right, key)
-    else:
-        if root.left is None:
-            temp = root.right
-            root = None
-            return temp
-
-        if root.right is None:
-            temp = root.left
-            root = None
-            return temp
-
-        temp = _find_min_val_node(root.right)
-        root.val = temp.val
-        root.right = delete_node(root.right, temp.val)
-    return root
 
 
 def min_value(root):
