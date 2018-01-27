@@ -27,12 +27,13 @@ def array_media_divide_conquer(target_array):
 def array_media_divide_conquer2(target_array):
 
     if len(target_array) % 2 == 0:
-        mid = len(target_array) / 2
-        mid_left, right_slice = _nth_digit(target_array, mid, 0, len(target_array)-1)
-        mid_right = min(right_slice)
+        mid = len(target_array) // 2
+        mid_left = _nth_digit(target_array, mid, 0, len(target_array)-1)
+        mid_right = _nth_digit(target_array, mid+1, 0, len(target_array)-1)
+        return (mid_left + mid_right) / 2.0
     else:
-        mid = (len(target_array)+1) / 2
-        return _nth_digit(target_array, mid, 0, len(target_array)-1)[0]
+        mid = (len(target_array)+1) // 2
+        return _nth_digit(target_array, mid, 0, len(target_array)-1)
 
 
 def _find_nth_digit(_arr, n):
@@ -77,7 +78,7 @@ def _nth_digit(nums, n, start, end):
         return _nth_digit(nums, n, start, i-1)
     elif i - start == n - 1:
         # for double array median
-        return nums[i], nums[i: end]
+        return nums[i]
     else:
         return _nth_digit(nums, n-i+start-1, i+1, end)
 
@@ -87,10 +88,10 @@ if __name__ == '__main__':
     ts1 = []
     ts2 = []
     ts3 = []
-    for _ in range(10):
+    for _ in range(1000):
         median = random.randint(-1000, 1000)
-        l1 = [random.randint(median-1000, median-1) for _ in range(1000000)]
-        l2 = [random.randint(median+1, median+1000) for _ in range(1000000)]
+        l1 = [random.randint(median-1000, median-1) for _ in range(1000)]
+        l2 = [random.randint(median+1, median+1000) for _ in range(1000)]
         test_arr = l1 + [median] + l2
         random.shuffle(test_arr)
 
@@ -111,3 +112,62 @@ if __name__ == '__main__':
     print "naive algorithm time consume is %f" % np.mean(ts1)
     print "d&c algorithm time consume is %f" % np.mean(ts2)
     print "d&c algorithm 2 time consume is %f" % np.mean(ts3)
+
+# A = [3,1,4,0,..]  # int32
+#
+# # time complexity
+# 1 + 1/2 + 1/4 ....
+#
+#
+# import random
+# #topk
+# def fn(A, k):
+#     if len(A) <= k:
+#         return A
+#
+#     kth_num = find_kth_num(A, k, 0, len(A)-1)
+#
+#     top_k = []
+#     num_of_kth = 0
+#
+#     for num in A:
+#         if num >= kth_num:
+#             top_k.append(num)
+#         #if num = kth_num:
+#         #    num_of_kth += 1
+#     #top_k.extend([kth_num] * (k-len(top_k)) )
+#
+#     return top_k
+#
+#
+# def find_kth_num(nums, k, start, end):
+#
+#     rd_idx = random.randint(start, end)
+#     pivot = nums[rd_idx]
+#
+#     i = start
+#     j = end
+#
+#     swap(nums, i, rd_idx)
+#
+#     while j > i:
+#         while j > i and nums[j] > num[pivot]:
+#             j -= 1
+#         swap(nums, i, j)
+#         while j > i and num[i] <= num[pivot]:
+#             i += 1
+#         swap(nums, i, j)
+#
+#     if i - start > k - 1:
+#         return find_kth_num(nums, k, start, i-1)
+#     elif i - start == k - 1:
+#         return nums[i]
+#     else:
+#         return find_kth_num(nums, k-i+start-1, i+1, end)
+#
+#
+#
+#
+#
+# def swap(nums, i, j):
+#     nums[i], nums[j] = nums[j], num[i]
